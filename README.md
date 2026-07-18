@@ -1,5 +1,7 @@
 # Gemini Sandbox Developer: Autonomous CLI AI Coding Agent
 
+[Project Demo on LinkedIn](https://www.linkedin.com/posts/anshprogrammer_this-is-the-ai-cli-coding-agent-which-i-created-activity-7484393435383353344-W6iS?utm_source=share&utm_medium=member_desktop&rcm=ACoAADlrQCgBJlIdPj0s2Rx7FxIB11A0tKoryNs)
+
 An elegant, production-grade CLI AI software engineering agent built using Python and the official Google GenAI SDK. Powered by the **Gemini 2.5 Flash** model, this agent operates within a multi-turn ReAct (Reasoning and Acting) execution loop, featuring sandboxed local file system analysis, autonomous code writing, and subprocess code verification.
 
 ---

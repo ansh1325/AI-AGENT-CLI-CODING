@@ -6,18 +6,7 @@ An elegant, production-grade CLI AI software engineering agent built using Pytho
 
 ---
 
-## 📺 Project Demo Video
 
-> [!IMPORTANT]
-> **Insert your video link here!** Paste your published video link inside the brackets below.
-> 
-> 👇 **Paste Link Here** 👇
-> 
-> [![Watch the Demo Video](https://img.youtube.com/vi/YOUR_VIDEO_ID_HERE/0.jpg)](PASTE_YOUR_VIDEO_LINK_HERE)
-> 
-> *(Click above to watch the agent analyze, modify, compile, and run tests on the sandbox codebase entirely on its own.)*
-
----
 
 ## 🚀 Key Capabilities
 

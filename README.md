@@ -19,7 +19,7 @@ An elegant, production-grade CLI AI software engineering agent built using Pytho
 
 ## 🏗️ System Architecture
 
-```mermaid
+```
 graph TD
     User([User Prompt]) --> Main[main.py Orchestrator]
     Main --> Gemini{Gemini 2.5 Flash}

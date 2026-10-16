@@ -63,10 +63,6 @@ Communication Guidelines:
             contents=messages,
             config=config
         )
-        if response.function_calls:
-            for func_c in response.function_calls:
-                result=call_function(func_c,verbose=verbose_flag)
-                # print(result)
         if response is None or response.usage_metadata is None:
             print("Response  is malformed")
             return

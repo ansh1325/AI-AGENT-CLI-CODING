@@ -98,12 +98,12 @@ Communication Guidelines:
                     break
             except Exception as e:
                 err_str = str(e)
-                print(f"\n⚠️  {model_candidate} overloaded/unavailable ({err_str[:70]}...). Cascading to next fallback...", flush=True)
+                print(f"\n⚠️  {model_candidate} issue: {err_str[:120]}. Cascading to next fallback...", flush=True)
                 time.sleep(1)
                 continue
 
         if response is None:
-            print("\n❌ All Gemini fallback models are currently overloaded. Please try again in a few moments or export your own GEMINI_API_KEY.", flush=True)
+            print("\n❌ Could not generate response with available candidate models.", flush=True)
             return
 
         if response.usage_metadata is None:

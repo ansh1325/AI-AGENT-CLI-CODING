@@ -45,9 +45,7 @@ Communication Guidelines:
         print("Usage: python main.py <prompt> [target_directory]", flush=True)
         sys.exit(1)
 
-    verbose_flag = False
-    if len(sys.argv) == 3 and sys.argv[2] == "--verbose":
-        verbose_flag = True
+    verbose_flag = "--verbose" in sys.argv
 
     prompt = sys.argv[1]
     print(f"\n🚀 AI Agent Started", flush=True)

@@ -9,10 +9,16 @@ import os
 import sys
 
 def get_working_directory() -> str:
-    # Accept target directory from CLI argument if provided, or default to Calculator/current directory
-    for arg in sys.argv[1:]:
-        if os.path.isdir(arg):
+    # 1. Check for explicit directory argument (e.g. python main.py "prompt" ./my_folder)
+    for arg in sys.argv[2:]:
+        if not arg.startswith("--"):
+            os.makedirs(arg, exist_ok=True)
             return os.path.abspath(arg)
+    # 2. Check if any positional argument points to an existing directory
+    for arg in sys.argv[1:]:
+        if not arg.startswith("--") and os.path.isdir(arg):
+            return os.path.abspath(arg)
+    # 3. Default to Calculator/ if present, otherwise current directory
     if os.path.isdir("Calculator"):
         return os.path.abspath("Calculator")
     return os.getcwd()

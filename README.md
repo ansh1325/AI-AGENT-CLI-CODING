@@ -1,6 +1,7 @@
 # Gemini Sandbox Developer: Autonomous CLI AI Coding Agent
 
-[Project Demo on LinkedIn](https://www.linkedin.com/posts/anshprogrammer_this-is-the-ai-cli-coding-agent-which-i-created-activity-7484393435383353344-W6iS?utm_source=share&utm_medium=member_desktop&rcm=ACoAADlrQCgBJlIdPj0s2Rx7FxIB11A0tKoryNs)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ansh1325/AI-AGENT-CLI-CODING)
+[![LinkedIn Demo](https://img.shields.io/badge/Demo-LinkedIn%20Video-0A66C2?logo=linkedin)](https://www.linkedin.com/posts/anshprogrammer_this-is-the-ai-cli-coding-agent-which-i-created-activity-7484393435383353344-W6iS)
 
 An elegant, production-grade CLI AI software engineering agent built using Python and the official Google GenAI SDK. Powered by the **Gemini 2.5 Flash** model, this agent operates within a multi-turn ReAct (Reasoning and Acting) execution loop, featuring sandboxed local file system analysis, autonomous code writing, and subprocess code verification.
 
@@ -73,6 +74,21 @@ The agent is restricted to working in this environment. It contains a mini-appli
 
 ## ⚙️ Getting Started
 
+### ☁️ Run in Cloud (1-Click GitHub Codespaces)
+The fastest way to test the agent without installing Python or cloning locally:
+1. Click **[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ansh1325/AI-AGENT-CLI-CODING)** to launch a cloud terminal.
+2. Export your free Gemini API key in the terminal (or add it to `.env`):
+   ```bash
+   export GEMINI_API_KEY="your_gemini_api_key_here"
+   ```
+3. Run the agent:
+   ```bash
+   python main.py "Run tests.py, then add power '**' support to calculator.py and verify all tests pass."
+   ```
+
+---
+
+### 💻 Local Setup (Alternative)
 ### 📋 Prerequisites
 *   Python 3.12 or newer
 *   A Gemini API Key (obtained from [Google AI Studio](https://aistudio.google.com/))

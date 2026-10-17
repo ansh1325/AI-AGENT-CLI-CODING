@@ -24,9 +24,9 @@ def call_function(
 ) -> types.Content:
     work_dir = target_directory or working_directory
     if verbose:
-        print(f"function call: {function_call.name}({function_call.args}) [dir: {work_dir}]")
+        print(f"⚡ function call: {function_call.name}({function_call.args}) [dir: {work_dir}]", flush=True)
     else:
-        print(f"Calling function {function_call.name}......")
+        print(f"⚡ Executing {function_call.name}...", flush=True)
     result=' '
     if function_call.name=="get_files_info":
         result = get_files_info(work_dir,**(function_call.args or {}))

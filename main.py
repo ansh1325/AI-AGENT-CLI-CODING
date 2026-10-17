@@ -11,11 +11,16 @@ from functions.get_file_content import get_file_content,schema_get_file_content
 from functions.run_python import run_python_file,schema_run_python_file
 from functions.get_files_info import get_files_info,schema_get_files_info
 
-from call_function import call_function
+from call_function import call_function, working_directory
+
 def main():
     load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
-    client=genai.Client(api_key=api_key)
+    if not api_key:
+        print("❌ Error: GEMINI_API_KEY is not set. Please set it via export GEMINI_API_KEY='...' or .env", flush=True)
+        sys.exit(1)
+
+    client = genai.Client(api_key=api_key)
     system_prompt = """You are an expert CLI-based AI coding assistant, code reviewer, and software architect.
 
 Your primary responsibilities are:
@@ -35,61 +40,73 @@ Communication Guidelines:
 - **Explain the "Why":** When suggesting a change or refactor, briefly explain the underlying reasoning (e.g., "Using a set here reduces lookup time from O(n) to O(1)").
 - **Focus on Security and Edge Cases:** Always consider unexpected inputs, error handling, and potential failure points in the code you write or review.
 """
-    if len(sys.argv) <2:
-        print("Usage: python main.py <prompt>")
+    if len(sys.argv) < 2:
+        print("Usage: python main.py <prompt> [target_directory]", flush=True)
         sys.exit(1)
-    verbose_flag=False
-    if len(sys.argv)==3 and sys.argv[2]=="--verbose":
-        verbose_flag=True
-    prompt=sys.argv[1]
-    messages=[
+
+    verbose_flag = False
+    if len(sys.argv) == 3 and sys.argv[2] == "--verbose":
+        verbose_flag = True
+
+    prompt = sys.argv[1]
+    print(f"\n🚀 AI Agent Started", flush=True)
+    print(f"📁 Target Workspace: {working_directory}", flush=True)
+    print(f"💬 Prompt: \"{prompt}\"\n", flush=True)
+
+    messages = [
         types.Content(role="user", parts=[types.Part(text=prompt)])
     ]
 
-
     available_functions = types.Tool(
-        function_declarations=[schema_get_files_info,
-        schema_get_file_content,
-        schema_run_python_file,
-        schema_write_file],
+        function_declarations=[
+            schema_get_files_info,
+            schema_get_file_content,
+            schema_run_python_file,
+            schema_write_file,
+        ],
     )
     
-    config=types.GenerateContentConfig(
-    tools=[available_functions], system_instruction=system_prompt)
-    max_iter=10
+    config = types.GenerateContentConfig(
+        tools=[available_functions],
+        system_instruction=system_prompt,
+    )
+    max_iter = 10
+
     for i in range(max_iter):
         response = None
-        for model_candidate in ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-3.8-flash']:
+        for model_candidate in ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.5-flash']:
             try:
+                print(f"⏳ [Turn {i+1}/{max_iter}] Reasoning with {model_candidate}... ", end="", flush=True)
                 response = client.models.generate_content(
                     model=model_candidate,
                     contents=messages,
                     config=config
                 )
                 if response:
+                    print("✓ Received plan", flush=True)
                     break
             except Exception as e:
                 err_str = str(e)
                 if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
-                    print("\n⚠️ Daily free Gemini API quota reached! Please try again tomorrow or export your own GEMINI_API_KEY.")
+                    print(f"\n⚠️ Daily free Gemini API quota reached! Please try again tomorrow or export your own GEMINI_API_KEY.", flush=True)
                     return
                 elif "404" in err_str or "NOT_FOUND" in err_str:
-                    # Model not available in this tier, try next fallback model
+                    print(f"(fallback from {model_candidate}) ", end="", flush=True)
                     continue
                 else:
-                    print(f"\n❌ Error during generation ({model_candidate}): {e}")
+                    print(f"\n❌ Error during generation ({model_candidate}): {e}", flush=True)
                     return
 
         if response is None:
-            print("\n❌ Could not generate response with available Gemini models.")
+            print("\n❌ Could not generate response with available Gemini models.", flush=True)
             return
-        if response is None or response.usage_metadata is None:
-            print("Response  is malformed")
+
+        if response.usage_metadata is None:
+            print("Response is malformed", flush=True)
             return
+
         if verbose_flag:
-            print(f"Prompt Token: {response.usage_metadata.prompt_token_count}")
-            print(f"Generated Token: {response.usage_metadata.candidates_token_count}")
-            print(f"Total Token: {response.usage_metadata.total_token_count}")
+            print(f"  [Tokens] Prompt: {response.usage_metadata.prompt_token_count} | Output: {response.usage_metadata.candidates_token_count} | Total: {response.usage_metadata.total_token_count}", flush=True)
         
         if response.candidates:
             for candidate in response.candidates:
@@ -99,10 +116,10 @@ Communication Guidelines:
                 
         if response.function_calls:
             for func_c in response.function_calls:
-                result=call_function(func_c,verbose=verbose_flag)
+                result = call_function(func_c, verbose=verbose_flag)
                 messages.append(result)
         else:
-            print(response.text)
+            print(f"\n🏁 Solution Complete:\n{response.text}\n", flush=True)
             return
    
 if __name__ == "__main__":

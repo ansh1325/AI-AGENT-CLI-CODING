@@ -1,7 +1,7 @@
 {
   "name": "Gemini AI Coding Agent",
   "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bullseye",
-  "postCreateCommand": "pip install --upgrade pip && pip install google-genai python-dotenv uv && uv sync && (echo 'source /workspaces/AI-AGENT-CLI-CODING/.venv/bin/activate 2>/dev/null || true' >> ~/.bashrc)",
+  "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt && (pip install uv && uv sync || true) && (echo 'source /workspaces/AI-AGENT-CLI-CODING/.venv/bin/activate 2>/dev/null || true' >> ~/.bashrc)",
   "customizations": {
     "vscode": {
       "settings": {

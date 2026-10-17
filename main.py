@@ -1,9 +1,10 @@
 from platform import system
 from google.genai import client
 import os
+import sys
+import time
 from dotenv import load_dotenv
 from google import genai
-import sys
 
 from google.genai import types
 from functions.write_file import write_file,schema_write_file
@@ -72,9 +73,17 @@ Communication Guidelines:
     )
     max_iter = 10
 
+    FALLBACK_MODELS = [
+        'gemini-2.0-flash',
+        'gemini-1.5-flash',
+        'gemini-1.5-pro',
+        'gemini-2.0-flash-lite',
+        'gemini-1.5-flash-8b',
+    ]
+
     for i in range(max_iter):
         response = None
-        for model_candidate in ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.5-flash']:
+        for model_candidate in FALLBACK_MODELS:
             try:
                 print(f"⏳ [Turn {i+1}/{max_iter}] Reasoning with {model_candidate}... ", end="", flush=True)
                 response = client.models.generate_content(
@@ -87,18 +96,12 @@ Communication Guidelines:
                     break
             except Exception as e:
                 err_str = str(e)
-                if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
-                    print(f"\n⚠️ Daily free Gemini API quota reached! Please try again tomorrow or export your own GEMINI_API_KEY.", flush=True)
-                    return
-                elif "404" in err_str or "NOT_FOUND" in err_str:
-                    print(f"(fallback from {model_candidate}) ", end="", flush=True)
-                    continue
-                else:
-                    print(f"\n❌ Error during generation ({model_candidate}): {e}", flush=True)
-                    return
+                print(f"\n⚠️  {model_candidate} overloaded/unavailable ({err_str[:70]}...). Cascading to next fallback...", flush=True)
+                time.sleep(1)
+                continue
 
         if response is None:
-            print("\n❌ Could not generate response with available Gemini models.", flush=True)
+            print("\n❌ All Gemini fallback models are currently overloaded. Please try again in a few moments or export your own GEMINI_API_KEY.", flush=True)
             return
 
         if response.usage_metadata is None:

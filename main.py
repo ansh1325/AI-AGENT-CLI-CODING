@@ -58,19 +58,31 @@ Communication Guidelines:
     tools=[available_functions], system_instruction=system_prompt)
     max_iter=10
     for i in range(max_iter):
-        try:
-            response = client.models.generate_content(
-                model='gemini-2.5-flash',
-                contents=messages,
-                config=config
-            )
-        except Exception as e:
-            if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                print("\n⚠️ Daily free Gemini API quota reached! Please try again tomorrow or export your own GEMINI_API_KEY.")
-                return
-            else:
-                print(f"\n❌ Error during generation: {e}")
-                return
+        response = None
+        for model_candidate in ['gemini-2.0-flash', 'gemini-1.5-flash']:
+            try:
+                response = client.models.generate_content(
+                    model=model_candidate,
+                    contents=messages,
+                    config=config
+                )
+                if response:
+                    break
+            except Exception as e:
+                err_str = str(e)
+                if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+                    print("\n⚠️ Daily free Gemini API quota reached! Please try again tomorrow or export your own GEMINI_API_KEY.")
+                    return
+                elif "404" in err_str or "NOT_FOUND" in err_str:
+                    # Model not available in this tier, try next fallback model
+                    continue
+                else:
+                    print(f"\n❌ Error during generation ({model_candidate}): {e}")
+                    return
+
+        if response is None:
+            print("\n❌ Could not generate response with available Gemini models.")
+            return
         if response is None or response.usage_metadata is None:
             print("Response  is malformed")
             return

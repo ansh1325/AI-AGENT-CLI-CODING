@@ -58,11 +58,19 @@ Communication Guidelines:
     tools=[available_functions], system_instruction=system_prompt)
     max_iter=10
     for i in range(max_iter):
-        response =client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=messages,
-            config=config
-        )
+        try:
+            response = client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=messages,
+                config=config
+            )
+        except Exception as e:
+            if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                print("\n⚠️ Daily free Gemini API quota reached! Please try again tomorrow or export your own GEMINI_API_KEY.")
+                return
+            else:
+                print(f"\n❌ Error during generation: {e}")
+                return
         if response is None or response.usage_metadata is None:
             print("Response  is malformed")
             return

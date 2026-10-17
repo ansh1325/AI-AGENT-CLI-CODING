@@ -74,6 +74,9 @@ Communication Guidelines:
     max_iter = 10
 
     FALLBACK_MODELS = [
+        'gemini-2.0-flash',
+        'gemini-1.5-flash',
+        'gemini-2.0-flash-lite',
         'gemini-3.6-flash',
         'gemini-3.5-flash',
         'gemini-3.1-flash-lite',
@@ -98,9 +101,17 @@ Communication Guidelines:
                     break
             except Exception as e:
                 err_str = str(e)
-                print(f"\n⚠️  {model_candidate} issue: {err_str[:120]}. Cascading to next fallback...", flush=True)
-                time.sleep(1)
-                continue
+                if "404" in err_str or "NOT_FOUND" in err_str:
+                    print(f"(not found in this tier) ", end="", flush=True)
+                    continue
+                elif "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+                    print(f"\n⚠️  {model_candidate} daily free limit reached. Trying next fallback...", flush=True)
+                    time.sleep(1)
+                    continue
+                else:
+                    print(f"\n⚠️  {model_candidate} issue: {err_str[:90]}... Cascading to next fallback...", flush=True)
+                    time.sleep(1)
+                    continue
 
         if response is None:
             print("\n❌ Could not generate response with available candidate models.", flush=True)

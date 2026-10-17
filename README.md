@@ -72,19 +72,46 @@ The agent is restricted to working in this environment. It contains a mini-appli
 
 ---
 
-## ⚙️ Getting Started
+## ⚙️ Getting Started & Codespaces Guide
 
 ### ☁️ Run in Cloud (1-Click GitHub Codespaces)
-The fastest way to test the agent without installing Python or cloning locally:
-1. Click **[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ansh1325/AI-AGENT-CLI-CODING)** to launch a cloud terminal.
-2. Export your free Gemini API key in the terminal (or add it to `.env`):
+The fastest way to test the agent without installing Python, Docker, or dependencies on your machine:
+
+1. Click the **[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ansh1325/AI-AGENT-CLI-CODING)** badge.
+2. In the cloud terminal that automatically opens, export your free Gemini API key:
    ```bash
-   export GEMINI_API_KEY="your_gemini_api_key_here"
+   export GEMINI_API_KEY="your_api_key_here"
    ```
-3. Run the agent:
-   ```bash
-   python main.py "Run tests.py, then add power '**' support to calculator.py and verify all tests pass."
-   ```
+3. Run the agent on the built-in sandbox or any custom project!
+
+---
+
+## 🚀 Execution & Usage Guide
+
+### 1. Test in Built-in Sandbox (`Calculator/`)
+Ask the agent to autonomously find a bug, refactor code, and verify via unit tests:
+```bash
+python main.py "Locate Calculator, run tests.py to verify it works, then add power '**' support to calculator.py and update tests to verify it works."
+```
+
+### 2. Run on ANY Custom Project Directory
+You are not limited to the sample sandbox. Pass any project directory path as an argument:
+```bash
+# Syntax: python main.py "<prompt>" <path/to/directory>
+
+# Example A: Create and test a new module in a custom folder
+mkdir my_project
+python main.py "Create a fibonacci module in math_utils.py, then create test_math.py with unit tests and run it" ./my_project
+
+# Example B: Audit and review the current repository
+python main.py "Analyze all python files in this project and report any missing docstrings or potential bugs" .
+```
+
+### 3. Verbose Diagnostic Mode
+Inspect the agent's internal tool calls, token usage metrics, and prompt token counts in real time:
+```bash
+python main.py "Run tests and tell me if they pass" --verbose
+```
 
 ---
 
@@ -107,27 +134,8 @@ pip install -r requirements.txt
 
 ### 🔑 Environment Setup
 Create a `.env` file in the root directory:
-
 ```env
 GEMINI_API_KEY=your_gemini_api_key_here
-```
-
----
-
-## 🚀 Execution & Usage
-
-Run the agent by executing [main.py](./main.py) with a description of the task:
-
-```bash
-# Example: Ask the agent to find and fix a bug in the calculator
-python main.py "Locate the calculator implementation, run tests.py to verify it works, then add power '**' support to calculator.py and update the tests to verify it works."
-```
-
-### 🔍 Verbose Mode
-Use the `--verbose` flag to monitor the model's function calls and detailed token counts:
-
-```bash
-python main.py "Run the tests and tell me if they pass" --verbose
 ```
 
 ---

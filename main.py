@@ -59,7 +59,7 @@ Communication Guidelines:
     max_iter=10
     for i in range(max_iter):
         response = None
-        for model_candidate in ['gemini-2.0-flash', 'gemini-1.5-flash']:
+        for model_candidate in ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-3.8-flash']:
             try:
                 response = client.models.generate_content(
                     model=model_candidate,

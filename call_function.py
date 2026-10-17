@@ -37,19 +37,19 @@ def call_function(
     elif function_call.name=="write_file":
         result = write_file(working_directory=work_dir,**(function_call.args or {}))
     
-    if result==' ':
+    if result == ' ':
         return types.Content(
-        role="tool",
-        parts=[
-            types.Part.from_function_response(
-                name=function_call.name,
-                response={"error": f"Unknown function: {function_call.name}"},
-            )
-        ],
-    )
+            role="user",
+            parts=[
+                types.Part.from_function_response(
+                    name=function_call.name,
+                    response={"error": f"Unknown function: {function_call.name}"},
+                )
+            ],
+        )
     else:
         return types.Content(
-            role="tool",
+            role="user",
             parts=[
                 types.Part.from_function_response(
                     name=function_call.name,

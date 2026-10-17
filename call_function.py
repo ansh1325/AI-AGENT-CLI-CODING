@@ -23,10 +23,18 @@ def call_function(
     function_call: types.FunctionCall, verbose: bool = False, target_directory: str = None
 ) -> types.Content:
     work_dir = target_directory or working_directory
-    if verbose:
-        print(f"⚡ function call: {function_call.name}({function_call.args}) [dir: {work_dir}]", flush=True)
+    arg_summary = ""
+    if function_call.args:
+        pairs = []
+        for k, v in function_call.args.items():
+            if k == "content":
+                pairs.append(f'{k}="<{len(str(v))} chars>"')
+            else:
+                pairs.append(f'{k}="{v}"')
+        arg_summary = f"({', '.join(pairs)})"
     else:
-        print(f"⚡ Executing {function_call.name}...", flush=True)
+        arg_summary = "()"
+    print(f"⚡ [Tool] {function_call.name}{arg_summary}", flush=True)
     result=' '
     if function_call.name=="get_files_info":
         result = get_files_info(work_dir,**(function_call.args or {}))

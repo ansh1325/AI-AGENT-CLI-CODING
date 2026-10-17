@@ -90,31 +90,37 @@ Communication Guidelines:
         response = None
         for model_candidate in FALLBACK_MODELS:
             try:
-                print(f"⏳ [Turn {i+1}/{max_iter}] Reasoning with {model_candidate}... ", end="", flush=True)
                 response = client.models.generate_content(
                     model=model_candidate,
                     contents=messages,
                     config=config
                 )
                 if response:
-                    print("✓ Received plan", flush=True)
+                    print(f"⏳ [Turn {i+1}/{max_iter}] Thinking ({model_candidate})... ✓ Plan ready", flush=True)
                     break
             except Exception as e:
                 err_str = str(e)
                 if "404" in err_str or "NOT_FOUND" in err_str:
-                    print(f"(not found in this tier) ", end="", flush=True)
                     continue
                 elif "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
-                    print(f"\n⚠️  {model_candidate} daily free limit reached. Trying next fallback...", flush=True)
-                    time.sleep(1)
+                    time.sleep(0.5)
                     continue
                 else:
-                    print(f"\n⚠️  {model_candidate} issue: {err_str[:90]}... Cascading to next fallback...", flush=True)
-                    time.sleep(1)
+                    time.sleep(0.5)
                     continue
 
         if response is None:
-            print("\n❌ Could not generate response with available candidate models.", flush=True)
+            print("\n" + "=" * 74, flush=True)
+            print("🚨 GEMINI API LIMIT REACHED (FREE TIER QUOTA EXHAUSTED)", flush=True)
+            print("=" * 74, flush=True)
+            print("All free fallback models have hit their quota or rate limit for this key.\n", flush=True)
+            print("👉 TO RESUME INSTANTLY WITH A FRESH 1,500 REQUESTS/DAY QUOTA:", flush=True)
+            print("   1. Get a free API key in 10 seconds: https://aistudio.google.com/apikey", flush=True)
+            print("   2. Run this command in your terminal:", flush=True)
+            print('      export GEMINI_API_KEY="your_new_key_here"\n', flush=True)
+            print("   3. Then re-run your prompt:", flush=True)
+            print(f'      python main.py "{prompt}"', flush=True)
+            print("=" * 74 + "\n", flush=True)
             return
 
         if response.usage_metadata is None:
